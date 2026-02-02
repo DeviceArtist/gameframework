@@ -1,7 +1,7 @@
 import { width, height } from "./conf.js";
 import { getVal, getValOnceAndReset, setVal } from "./storage.js";
 import { changeGameStatus } from "./looper.js";
-import { checkCollision } from "./tool.js";
+import { checkCollision, makeSprite, updatePosition } from "./tool.js";
 
 const game = {
     time: 0,
@@ -10,63 +10,53 @@ const game = {
 
 const enemies = [];
 
-const player = {
-    speed: 10,
-    size: {
-        w: 10,
-        h: 10
-    },
-    position: {
+const player = makeSprite(
+    "player",
+    {
         x: 0,
-        y: 0,
+        y: height - 10
     },
-    vector: {
-        x: 0,
-        y: 0,
-    }
-}
-
-const update_position = () => {
-    player.position.x += player.vector.x;
-    player.position.y += player.vector.y;
-
-    player.vector = {
+    {
         x: 0,
         y: 0
-    }
-
-    enemies.forEach(enemy => {
-        enemy.position.x += enemy.vector.x;
-        enemy.position.y += enemy.vector.y;
-    })
-}
+    },
+    {
+        w: 10, h: 10
+    },
+    "#ccc",
+    1
+);
 
 const insert_a_enemy = () => {
-    enemies.push({
-        life: 1,
-        size: {
-            w: 10,
-            h: 10
-        },
-        position: {
-            x: width,
-            y: height - 10
-        },
-        vector: {
-            x: -1,
-            y: 0
-        }
-    });
+
+    enemies.push(
+        makeSprite(
+            "enemy",
+            {
+                x: width,
+                y: height - 10
+            },
+            {
+                x: -1,
+                y: 0
+            },
+            {
+                w: 10, h: 10
+            },
+            "#f00",
+            1
+        )
+    );
 }
 
 export const setup = () => {
-    player.speed = 10;
+    player.speed = 2;
     player.position = {
         x: 0,
         y: height - player.size.h
     }
     player.vector = {
-        x: 0,
+        x: 1,
         y: 0
     }
     enemies.length = 0;
@@ -104,12 +94,13 @@ export const update = () => {
         insert_a_enemy();
     }
 
-    update_position();
+    updatePosition(player, ...enemies);
 
     enemies.forEach(enemy => {
         if (enemy.life == 0) {
             return;
         }
+
         if (checkCollision(player, enemy)) {
             const hiscore = localStorage.getItem("hiscore");
             if (hiscore) {
@@ -130,8 +121,8 @@ export const update = () => {
 
 }
 
-const render_sprite = (ctx, color, sprite) => {
-    ctx.fillStyle = color;
+const render_sprite = (ctx, sprite) => {
+    ctx.fillStyle = sprite.color;
     const { size: { w, h }, position: { x, y } } = sprite;
     ctx.fillRect(x, y, w, h);
 }
@@ -142,11 +133,11 @@ export const render = () => {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, width, height);
 
-    render_sprite(ctx, "#ccc", player);
+    render_sprite(ctx, player);
 
     ctx.fillStyle = "#f00";
     enemies.forEach(enemy => {
-        render_sprite(ctx, "#f00", enemy);
+        render_sprite(ctx, enemy);
     });
 
     ctx.textAlign = 'left';

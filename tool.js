@@ -50,3 +50,31 @@ export const fillTextAtCenter = (text, font, size, color, alpha, offset) => {
     ctx.globalAlpha = alpha;
     ctx.fillText(text, centerX + offset.x, centerY + offset.y);
 }
+
+export const makeSprite = (name, position, vector, size, color, speed) => {
+    return {
+        name,
+        color,
+        life: 1,
+        size,
+        position,
+        vector,
+        speed,
+    }
+}
+
+export const updatePosition = (...sprites) => {
+    sprites.forEach(sprite => {
+        if (sprite.life == 0) {
+            return;
+        }
+        sprite.position.x += sprite.vector.x * sprite.speed;
+        sprite.position.y += sprite.vector.y * sprite.speed;
+        if (sprite.name === "player") {
+            sprite.vector = {
+                x: 0,
+                y: 0
+            }
+        }
+    });
+};
