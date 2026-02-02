@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            /* justify-content: center; */
+            align-items: center;
+        }
+
+        #app {
+            margin: 20px 0;
+        }
+
+        .keyboard {
+            width: 300px;
+            margin: 20px 0;
+        }
+
+        .line {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cp {
+            display: flex;
+            justify-content: space-between;
+            width: 90px;
+        }
+
+        .center {
+            justify-content: center;
+        }
+
+        .gap {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="module" src="app.js"></script>
+    <div class="keyboard">
+        <div class="line">
+            <div class="cp center"><button>w</button></div>
+            <div class="gap">
+                <button>r</button>
+                <button>p</button>
+            </div>
+        </div>
+        <div class="line">
+            <div class="cp">
+                <button>a</button>
+                <button>d</button>
+            </div>
+        </div>
+        <div class="line">
+            <div class="cp center">
+                <button>s</button>
+            </div>
+            <div class="gap">
+                <button>j</button>
+                <button>k</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const simulateKeypressEvent = (key, element = document) => {
+            // 创建键盘事件
+            const event = new KeyboardEvent('keypress', {
+                key: key,
+                code: 'Key' + key.toUpperCase(),
+                keyCode: key.toUpperCase().charCodeAt(0),
+                which: key.toUpperCase().charCodeAt(0),
+                bubbles: true,
+                cancelable: true
+            });
+
+            // 在指定元素上触发事件
+            element.dispatchEvent(event);
+            console.log(`已发送keypress事件: ${key}`);
+        }
+
+        document.querySelectorAll("button").forEach(button => {
+            button.addEventListener("click", () => {
+                simulateKeypressEvent(button.innerText);
+            });
+        })
+    </script>
+</body>
+
+</html>
